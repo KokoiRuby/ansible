@@ -1,0 +1,18 @@
+---
+# tasks file for os_repo
+- name: 1 - Ping-able?
+  ping:
+
+- name: 2 - Backup /etc/apt/sources.list
+  copy:
+    src: /etc/apt/sources.list
+    dest: /etc/apt/sources.list.bak
+
+- name: 3 - Update /etc/apt/sources.list
+  template:
+    src: sources.list.j2
+    dest: /etc/apt/sources.list
+
+- name: 4 - Update repo
+  apt:
+    update_cache: yes

@@ -1,0 +1,13 @@
+- name: Setup OS
+  hosts: all
+  become: yes
+  gather_facts: false
+    #  vars:
+    #    timesync_ntp_servers:
+    #      - hostname: 172.19.192.1
+    #        iburst: yes
+  roles:
+    - role: os_kernel
+    - role: os_swap
+    - role: os_repo
+      #    - role: linux-system-roles.timesync

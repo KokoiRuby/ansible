@@ -1,0 +1,6 @@
+- name: Install Container Runtime
+  hosts: all
+  become: yes
+  gather_facts: false
+  roles:
+    - role: docker

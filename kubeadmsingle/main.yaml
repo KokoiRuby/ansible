@@ -1,0 +1,8 @@
+- name: OS Playbook
+  import_playbook: ./bookstore/os.yaml
+- name: Docker Playbook
+  import_playbook: ./bookstore/docker.yaml
+- name: kubeadm Playbook
+  import_playbook: ./bookstore/kubeadm.yaml
+- name: kubectl Playbook
+  import_playbook: ./bookstore/kubectl.yaml

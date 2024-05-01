@@ -1,0 +1,19 @@
+---
+# tasks file for os_swap
+- name: 1 - Ping-able?
+  ping:
+  
+- name: 2 - Swap off
+  command: swapoff -a
+  
+- name: 3 - Disable swap in /etc/fstab
+  replace:
+    path: /etc/fstab
+    regexp: '^/swap.img'
+    replace: '#/swap.img'
+    
+      #- name: 4 - Disable firewalld
+      #  service: 
+      #    name: firewalld
+      #    state: stopped
+      #    enabled: no

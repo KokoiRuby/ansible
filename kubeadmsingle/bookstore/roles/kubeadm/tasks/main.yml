@@ -1,0 +1,63 @@
+---
+# tasks file for kubeadm
+- name: 1 - Ping-able?
+  ping:
+
+- name: 2 - Install dep for kubeadm
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+
+- name: 3 - Add K8s apt repo key
+  apt_key:
+    url: https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg
+    state: present
+
+- name: 4 - Add K8s apt repo
+  template:
+    src: kubernetes.list.j2
+    dest: /etc/apt/sources.list.d/kubernetes.list
+
+- name: 5 - Install kubelet, kubeadm, kubectl
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - kubelet
+    - kubeadm
+    - kubectl
+
+- name: 6 - Hold kubelet, kubeadm, kubectl
+  dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  with_items:
+    - kubelet
+    - kubeadm
+    - kubectl
+
+- name: 7 - Update /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ ansible_default_ipv4.address }} {{ ansible_hostname }}"
+    insertafter: EOF
+
+- name: 8 - kubeadm init
+  command: "kubeadm init --image-repository {{ image_repo }} --kubernetes-version {{ ver }} --pod-network-cidr={{ cidr }} --cri-socket /run/containerd/containerd.sock --apiserver-advertise-address={{ ansible_default_ipv4.address }}"
+
+- name: 9 - Setup kubeconfig (1/2)
+  file:
+    path: "{{ ansible_env.HOME }}/.kube"
+    state: directory
+
+- name: 9 - Setup kubeconfig (2/2)
+  copy:
+    src: "/etc/kubernetes/admin.conf"
+    dest: "/home/{{ ansible_user }}/.kube/config"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    remote_src: yes
